@@ -33,37 +33,7 @@
                 and y-intercept, adjust the line below to separate the two points. When you are done, press the 
                 button below it to see the result.
             </p>
-            <Plotly 
-                :data="data()" 
-                :layout="layout" 
-                :display-mode-bar="true"
-            ></Plotly>
-            <div class="controls">
-                <div class="control">
-                    <h4 class="control-header">angle</h4>
-                    <round-slider
-                        v-model="angle"
-                        start-angle="0"
-                        end-angle="+360"
-                        line-cap="round"
-                        radius="60"
-                        min="0"
-                        max="180"
-                    />
-                </div>
-                <div class="control">
-                    <h4 class="control-header">intercept</h4>
-                    <vue-slider 
-                        class="slider"
-                        v-model="intercept" 
-                        :min="-6"
-                        :max="6"
-                        :interval=0.1
-                        width="300px"
-                    />
-                </div>
-            </div>
-
+            <InteractivePlot></InteractivePlot>
             <p>
                 Simple enough, right?
             </p>
@@ -73,127 +43,25 @@
     </div>
 </template>
 <script>
-import { Plotly } from "vue-plotly"
-import BatchnormData from "@/data/batchnorm.json"
-import RoundSlider from 'vue-round-slider'
-import VueSlider from 'vue-slider-component'
-import 'vue-slider-component/theme/default.css'
-
-let red = 'rgba(237, 31, 31, 1)'
-let green = 'rgba(12, 237, 49, 1)'
-let yellow = 'rgba(237, 223, 31, 1)'
-let blue = 'rgba(31, 199, 237, 1)'
+import InteractivePlot from "@/components/InteractivePlot.vue"
 
 export default {
     name: "Batchnorm",
     components: {
-        Plotly,
-        VueSlider,
-        RoundSlider
+        InteractivePlot
     },
     data(){
-        let linspace = []
-        for (var i = -100; i<100; i++){
-            linspace.push(i/10)
-        }
-        let data = {
-            angle: 45,
-            intercept: 0,
-            x: linspace,
-            title: "Understanding Batch normalization",
-            classified: false,
-            layout: {
-                // title: "My graph",
-                autorange: false,
-                xaxis:{
-                    range: [-10, 10]
-                },
-                yaxis:{
-                    range: [-5, 5]
-                },
-                showlegend: false,
-                colorway:[
-                    red,
-                    yellow,
-                    blue
-                ]
-            }
-        }
-        document.title = data.title;
-        return data
-    },
-    methods:{
-        line(angle, intercept, x){
-            let slope = Math.tan(angle * Math.PI / 180)
-            return x.map(p => slope*p + intercept)
-        },
-        sign(angle, intercept, x, y){
-            let slope = Math.tan(angle * Math.PI / 180)
-            let anypos = false
-            let anyneg = false
-            for (let i=0; i<100; i++){
-                let s = slope*x[i] + intercept - y[i]
-                if (s > 0) anypos = true
-                else if (s < 0) anyneg = true
-            }
-            if(anypos && anyneg){
-                return 0
-            } else if (anypos) {
-                return 1
-            } else {
-                return -1
-            }
-
-        },
-        checkClassified(){
-            let x1 = BatchnormData["points"]["class1"]["x"]
-            let y1 = BatchnormData["points"]["class1"]["y"]
-            let x2 = BatchnormData["points"]["class2"]["x"]
-            let y2 = BatchnormData["points"]["class2"]["y"]
-
-            let sign1 = this.sign(this.angle, this.intercept, x1, y1)
-            let sign2 = this.sign(this.angle, this.intercept, x2, y2)
-            if ( sign1 != 0 && sign2 != 0 && sign1 == -1*sign2){
-                this.classified = true
-                this.layout.colorway[0] = green
-            } else {
-                this.classified = false
-                this.layout.colorway[0] = red
-            }
-        },
-        data(){
-            return [
-                {
-                    x: this.x,
-                    y: this.line(this.angle, this.intercept, this.x),
-                    type:"scatter"
-                },
-                {
-                    x: BatchnormData["points"]["class1"]["x"],
-                    y: BatchnormData["points"]["class1"]["y"],
-                    type:"scatter",
-                    mode:"markers"
-                },
-                {
-                    x: BatchnormData["points"]["class2"]["x"],
-                    y: BatchnormData["points"]["class2"]["y"],
-                    type:"scatter",
-                    mode:"markers"
-                }
-            ]
+        return{
+            title: "Understanding Batch normalization"
         }
     },
-    watch:{
-        angle(){
-            this.checkClassified()
-        },
-        intercept(){
-            this.checkClassified()
-        }
+    mounted(){
+        document.title = this.title;
     }
 }
 </script>
 <style lang="scss" scoped>
+
 .page{
     margin: auto;
     padding: 30px;
@@ -220,20 +88,5 @@ $photo-size: 40px;
 }
 .body{
     text-align: justify;
-}
-.controls{
-    display: flex;
-    padding: 10px;
-    justify-content: space-evenly;
-    align-items: baseline;
-    text-align: center;
-}
-.control{
-    margin: 0px 10px;
-}
-.slider{
-    margin-top: 60px;
-}
-.control-header{
 }
 </style>

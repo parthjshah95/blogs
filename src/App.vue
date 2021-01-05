@@ -49,6 +49,41 @@ $junction-dir: "assets/fonts/Amaranth/";
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+$box-shadow: 0 5px 20px rgba(0,0,0,0.19), 0 3px 6px rgba(0,0,0,0.23);
+$box-shadow-highlight: 0 5px 30px rgba(0,0,0,0.19), 0 3px 15px rgba(0,0,0,0.23);
+
+$btn-color: #004D40;
+$btn-color-light: #E0F2F1;
+$btn-color-active: #80CBC4;
+.button{
+  text-decoration: none;
+  width: max-content;
+  margin: 20px auto;
+  display: block;
+  border-radius: 5px;
+  box-shadow: $box-shadow;
+  color: white;
+  border: 2px solid $btn-color;
+  background-color: $btn-color;
+  transition: 0.1s;
+  padding: 8px 10px;
+  cursor: pointer;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;    
+
+  &:hover{
+    border: 2px solid $btn-color;
+    background-color: $btn-color-light;
+    color: $btn-color;
+    box-shadow: $box-shadow-highlight;
+  }
+  &:active{
+    background-color: $btn-color-active;
+    border: 2px solid $btn-color-active;
+  }
 }
 </style>
